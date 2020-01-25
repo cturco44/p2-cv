@@ -10,7 +10,9 @@
 // EFFECTS:  Initializes the Image with the given width and height.
 // NOTE:     Do NOT use new or delete here.
 void Image_init(Image* img, int width, int height) {
-  assert(false); // TODO Replace with your implementation!
+  
+  img->width = width;
+  img->height = height;
 }
 
 // REQUIRES: img points to an Image
@@ -22,7 +24,7 @@ void Image_init(Image* img, int width, int height) {
 // NOTE:     See the project spec for a discussion of PPM format.
 // NOTE:     Do NOT use new or delete here.
 void Image_init(Image* img, std::istream& is) {
-  assert(false); // TODO Replace with your implementation!
+  
 }
 
 // REQUIRES: img points to a valid Image
@@ -45,13 +47,13 @@ void Image_print(const Image* img, std::ostream& os) {
 // REQUIRES: img points to a valid Image
 // EFFECTS:  Returns the width of the Image.
 int Image_width(const Image* img) {
-  assert(false); // TODO Replace with your implementation!
+  return img->width;
 }
 
 // REQUIRES: img points to a valid Image
 // EFFECTS:  Returns the height of the Image.
 int Image_height(const Image* img) {
-  assert(false); // TODO Replace with your implementation!
+  return img->height;
 }
 
 // REQUIRES: img points to a valid Image
@@ -59,7 +61,21 @@ int Image_height(const Image* img) {
 //           0 <= column && column < Image_width(img)
 // EFFECTS:  Returns the pixel in the Image at the given row and column.
 Pixel Image_get_pixel(const Image* img, int row, int column) {
-  assert(false); // TODO Replace with your implementation!
+
+  const Matrix* red = &(img->red_channel);
+  const Matrix* blue = &(img->blue_channel);
+  const Matrix* green = &(img->green_channel);
+
+  const int* r = Matrix_at(red, row, column);
+  const int* b = Matrix_at(blue,row,column);
+  const int* g = Matrix_at(green,row,column);
+
+  Pixel pix;
+  pix.r = *r;
+  pix.b = *b;
+  pix.g = *g;
+
+  return pix;
 }
 
 // REQUIRES: img points to a valid Image
@@ -69,7 +85,17 @@ Pixel Image_get_pixel(const Image* img, int row, int column) {
 // EFFECTS:  Sets the pixel in the Image at the given row and column
 //           to the given color.
 void Image_set_pixel(Image* img, int row, int column, Pixel color) {
-  assert(false); // TODO Replace with your implementation!
+  Matrix* red = &(img->red_channel);
+  Matrix* blue = &(img->blue_channel);
+  Matrix* green = &(img->green_channel);
+  
+  int* r = Matrix_at(red,row,column);
+  int* b = Matrix_at(blue,row,column);
+  int* g = Matrix_at(green,row,column);
+
+  *r = color.r;
+  *b = color.b;
+  *g = color.g;
 }
 
 // REQUIRES: img points to a valid Image
