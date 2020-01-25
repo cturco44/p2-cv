@@ -61,15 +61,17 @@ int Image_height(const Image* img) {
 //           0 <= column && column < Image_width(img)
 // EFFECTS:  Returns the pixel in the Image at the given row and column.
 Pixel Image_get_pixel(const Image* img, int row, int column) {
-
+  //Grab reference to matrix 
   const Matrix* red = &(img->red_channel);
   const Matrix* blue = &(img->blue_channel);
   const Matrix* green = &(img->green_channel);
 
+  //Grab reference to element in matrix
   const int* r = Matrix_at(red, row, column);
   const int* b = Matrix_at(blue,row,column);
   const int* g = Matrix_at(green,row,column);
 
+  //Dereference and store in pixel
   Pixel pix;
   pix.r = *r;
   pix.b = *b;
@@ -85,14 +87,17 @@ Pixel Image_get_pixel(const Image* img, int row, int column) {
 // EFFECTS:  Sets the pixel in the Image at the given row and column
 //           to the given color.
 void Image_set_pixel(Image* img, int row, int column, Pixel color) {
+  //Grab reference to matrix
   Matrix* red = &(img->red_channel);
   Matrix* blue = &(img->blue_channel);
   Matrix* green = &(img->green_channel);
   
+  //Grab reference to proper element in each matrix
   int* r = Matrix_at(red,row,column);
   int* b = Matrix_at(blue,row,column);
   int* g = Matrix_at(green,row,column);
 
+  //Change referenced values to be the same as given pixel
   *r = color.r;
   *b = color.b;
   *g = color.g;
@@ -102,5 +107,13 @@ void Image_set_pixel(Image* img, int row, int column, Pixel color) {
 // MODIFIES: *img
 // EFFECTS:  Sets each pixel in the image to the given color.
 void Image_fill(Image* img, Pixel color) {
-  assert(false); // TODO Replace with your implementation!
+  //Grab reference to each matrix in img
+  Matrix* red = &(img->red_channel);
+  Matrix* blue = &(img->blue_channel);
+  Matrix* green = &(img->green_channel);
+
+  //Use matrix fill function to modify values of each matrix
+  Matrix_fill(red,color.r);
+  Matrix_fill(blue,color.b);
+  Matrix_fill(green,color.g);
 }
