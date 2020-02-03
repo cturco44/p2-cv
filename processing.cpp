@@ -137,7 +137,34 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
 //           with the bottom of the image and proceeding to the top,
 //           as described in the project spec.
 void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
-  assert(false); // TODO Replace with your implementation!
+  assert(false);
+  int left = 0;
+  int right = Matrix_width(cost);
+  int currCol = -1;
+
+  for(int i = Matrix_height(cost)-1; i >=0; --i)
+  {
+    if(currCol == -1) {
+      left = 0;
+      right = Matrix_width(cost)-1;
+    }
+    else if(currCol == Matrix_width(cost)-1){
+      left = Matrix_width(cost)-2;
+      right = Matrix_width(cost)-1;
+    }
+    else if(currCol == 0){
+      left = 0;
+      right = 1;
+    }
+    else {
+      left = currCol-1;
+      right = currCol+1;
+    }
+    
+    currCol = Matrix_column_of_min_value_in_row(cost, i, left, right);
+    *(seam + i) = currCol;
+    
+  }
 }
 
 
