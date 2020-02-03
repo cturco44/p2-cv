@@ -89,7 +89,21 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
 void compute_energy_matrix(const Image* img, Matrix* energy) {
-  assert(false); // TODO Replace with your implementation!
+  //Initialize energy matrix
+  Matrix_init(energy, Image_width(img), Image_height(img));
+  Matrix_fill(energy, 0);
+
+  //Compute energy for each non-border pixel
+  for(int i = 1; i < Image_height(img)-1; ++i)
+  {
+    for(int j = 1; j < Image_width(img)-1; ++j)
+    {
+      *Matrix_at(energy, i, j) = squared_difference(Image_get_pixel(img,i-1,j),Image_get_pixel(img,i+1,j)) + squared_difference(Image_get_pixel(img,i, j-1), Image_get_pixel(img, i, j+1));
+    }
+  }
+
+  //Find max energy and use it to fill in the border pixels
+  Matrix_fill_border(energy,Matrix_max(energy));
 }
 
 
