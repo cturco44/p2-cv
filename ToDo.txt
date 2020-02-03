@@ -5,7 +5,7 @@ Matt:
 2. Write compute_energy_matrix function
 3. Write find_minimal_vertical_seam function
 4. Write resize.cpp file
-5. Write seam_carve_width
+5. Write seam_carve
 6. Add 2 tests to processing_public_tests.cpp
  
 
@@ -16,5 +16,5 @@ Connor:
 2. Write compute_vertical_cost_matrix function 
 3. Write remove_vertical_seam function
 4. Write seam_carve_height
-5. Write seam_carve
+5. Write seam_carve_width
 6. Add 2 tests to processing_public_tests.cpp
