@@ -13,6 +13,9 @@ void Image_init(Image* img, int width, int height) {
   
   img->width = width;
   img->height = height;
+  Matrix_init(&(img->red_channel), width, height);
+  Matrix_init(&(img->green_channel), width, height);
+  Matrix_init(&(img->blue_channel), width, height);
 }
 
 // REQUIRES: img points to an Image
@@ -38,14 +41,21 @@ void Image_init(Image* img, std::istream& is) {
   int max;
   is >> max;
 
+  //Initialize Matrices
+  Matrix_init(&(img->red_channel), Image_width(img), Image_height(img));
+  Matrix_init(&(img->green_channel), Image_width(img), Image_height(img));
+  Matrix_init(&(img->blue_channel), Image_width(img), Image_height(img));
+
   //Read in values
-  for(int i = 0; i < img->height; ++i)
-  {
-    for(int j = 0; j < img->width; ++j)
+  for(int i = 0; i < Image_height(img); ++i)
     {
-      is >> *Matrix_at(&(img->red_channel), i, j) >> *Matrix_at(&(img->green_channel), i, j) >> *Matrix_at(&(img->blue_channel), i, j);
+      for(int j = 0; j < Image_width(img); ++j)
+      {
+        Pixel pix;
+        is >> pix.r >> pix.g >> pix.b;
+        Image_set_pixel(img, i, j, pix);
+      }
     }
-  }
 }
 
 // REQUIRES: img points to a valid Image
@@ -62,12 +72,13 @@ void Image_init(Image* img, std::istream& is) {
 //           "extra" space at the end of each line. See the project spec
 //           for an example.
 void Image_print(const Image* img, std::ostream& os) {
-  os << "P3\n" << img->width << " " << img->height << '\n' << "255" << '\n';
-  for(int i = 0; i < img->height; ++i)
+  os << "P3\n" << Image_width(img) << " " << Image_height(img) << '\n' << "255" << '\n';
+  for(int i = 0; i < Image_height(img); ++i)
   {
-    for(int j = 0; j < img->width; ++i)
+    for(int j = 0; j < Image_width(img); ++j)
     {
-      os << *Matrix_at(&(img->red_channel), i, j) << " " << *Matrix_at(&(img->green_channel), i, j) << " " << *Matrix_at(&(img->blue_channel), i, j) << " ";
+      Pixel pix = Image_get_pixel(img, i, j);
+      os << pix.r << " " << pix.g << " " << pix.b << " ";
     }
     os << '\n';
   }
@@ -91,6 +102,10 @@ int Image_height(const Image* img) {
 //           0 <= column && column < Image_width(img)
 // EFFECTS:  Returns the pixel in the Image at the given row and column.
 Pixel Image_get_pixel(const Image* img, int row, int column) {
+  //Check required
+  assert(0 <= row && row < Image_height(img));
+  assert(0 <= column && column < Image_width(img));
+  
   //Grab reference to matrix 
   const Matrix* red = &(img->red_channel);
   const Matrix* blue = &(img->blue_channel);
@@ -117,33 +132,22 @@ Pixel Image_get_pixel(const Image* img, int row, int column) {
 // EFFECTS:  Sets the pixel in the Image at the given row and column
 //           to the given color.
 void Image_set_pixel(Image* img, int row, int column, Pixel color) {
-  //Grab reference to matrix
-  Matrix* red = &(img->red_channel);
-  Matrix* blue = &(img->blue_channel);
-  Matrix* green = &(img->green_channel);
+  //Check required
+  assert(0 <= row && row < Image_height(img));
+  assert(0 <= column && column < Image_width(img));
   
-  //Grab reference to proper element in each matrix
-  int* r = Matrix_at(red,row,column);
-  int* b = Matrix_at(blue,row,column);
-  int* g = Matrix_at(green,row,column);
-
-  //Change referenced values to be the same as given pixel
-  *r = color.r;
-  *b = color.b;
-  *g = color.g;
+  //Grab reference to matrix
+  *Matrix_at(&(img->red_channel), row, column) = color.r;
+  *Matrix_at(&(img->green_channel), row, column) = color.g;
+  *Matrix_at(&(img->blue_channel), row, column) = color.b;
 }
 
 // REQUIRES: img points to a valid Image
 // MODIFIES: *img
 // EFFECTS:  Sets each pixel in the image to the given color.
 void Image_fill(Image* img, Pixel color) {
-  //Grab reference to each matrix in img
-  Matrix* red = &(img->red_channel);
-  Matrix* blue = &(img->blue_channel);
-  Matrix* green = &(img->green_channel);
-
   //Use matrix fill function to modify values of each matrix
-  Matrix_fill(red,color.r);
-  Matrix_fill(blue,color.b);
-  Matrix_fill(green,color.g);
+  Matrix_fill(&(img->red_channel),color.r);
+  Matrix_fill(&(img->blue_channel),color.b);
+  Matrix_fill(&(img->green_channel),color.g);
 }
