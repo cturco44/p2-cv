@@ -24,7 +24,28 @@ void Image_init(Image* img, int width, int height) {
 // NOTE:     See the project spec for a discussion of PPM format.
 // NOTE:     Do NOT use new or delete here.
 void Image_init(Image* img, std::istream& is) {
+  //Read in information from is
   
+  //Check file format
+  char check[2];
+  is >> check;
+  assert(check[0] == 'P' && check[1] == '3');
+  
+  //Read in width and height
+  is >> img->width >> img->height;
+
+  //Read in max
+  int max;
+  is >> max;
+
+  //Read in values
+  for(int i = 0; i < img->height; ++i)
+  {
+    for(int j = 0; j < img->width; ++j)
+    {
+      is >> *Matrix_at(&(img->red_channel), i, j) >> *Matrix_at(&(img->green_channel), i, j) >> *Matrix_at(&(img->blue_channel), i, j);
+    }
+  }
 }
 
 // REQUIRES: img points to a valid Image
@@ -41,7 +62,16 @@ void Image_init(Image* img, std::istream& is) {
 //           "extra" space at the end of each line. See the project spec
 //           for an example.
 void Image_print(const Image* img, std::ostream& os) {
-  assert(false); // TODO Replace with your implementation!
+  os << "P3\n" << img->width << " " << img->height << '\n' << "255" << '\n';
+  for(int i = 0; i < img->height; ++i)
+  {
+    for(int j = 0; j < img->width; ++i)
+    {
+      os << *Matrix_at(&(img->red_channel), i, j) << " " << *Matrix_at(&(img->green_channel), i, j) << " " << *Matrix_at(&(img->blue_channel), i, j) << " ";
+    }
+    os << '\n';
+  }
+
 }
 
 // REQUIRES: img points to a valid Image
