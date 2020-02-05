@@ -117,7 +117,42 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
 void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
-  assert(false); // TODO Replace with your implementation!
+    int width = Matrix_width(energy);
+    int height = Matrix_height(energy);
+    
+    Matrix_init(cost, width, height);
+    
+    
+    const int *end = Matrix_at(cost, 0, width - 1);
+    
+    //Fills first row of cost with energy values
+    for (const int *start = Matrix_at(cost, 0, 0); start < end; ++start) {
+        
+        int column = Matrix_column(cost, start);
+        *Matrix_at(cost, 0, column) = *Matrix_at(energy, 0, column);
+    }
+    
+    for (int row = 1; row < height - 1; ++row) {
+        for (int col = 0; col < width - 1; ++col) {
+            
+            int c_before = col - 1;
+            int c_next = col + 1;
+            //Makes sure that don't look out of bounds of matrix
+            if(c_before < 0) {
+                c_before = 0;
+            }
+            if(c_next > width - 1) {
+                c_next = width - 1;
+            }
+            
+            int min = Matrix_min_value_in_row(cost, row - 1, c_before, c_next);
+            int cost_value = *Matrix_at(energy, row, col) + min;
+            
+            *Matrix_at(cost, row, col) = cost_value;
+            
+        }
+    }
+    
 }
 
 
@@ -181,7 +216,24 @@ void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
 // NOTE:     Use the new operator here to create the smaller Image,
 //           and then use delete when you are done with it.
 void remove_vertical_seam(Image *img, const int seam[]) {
-  assert(false); // TODO Replace with your implementation!
+    assert(Image_width(img) >= 2);
+    int width = Image_width(img);
+    //didn't write asserts for all RMEs
+    
+    Image* holder = new Image;
+    Image_init(holder, Image_width(img) - 1, Image_height(img));
+    
+    for (int row = 0; row < Image_height(img); ++row) {
+        for(int col = 0; col < seam[row]; ++col) {
+            Image_set_pixel(holder, row, col, Image_get_pixel(img, row, col));
+        }
+        for(int col2 = seam[row] + 1; col2 < width - 1; ++col2) {
+            Image_set_pixel(holder, row, col2 - 1, Image_get_pixel(img, row, col2));
+        }
+    }
+    
+    *img = *holder;
+    delete holder;
 }
 
 
@@ -193,7 +245,23 @@ void remove_vertical_seam(Image *img, const int seam[]) {
 // NOTE:     Use the new operator here to create Matrix objects, and
 //           then use delete when you are done with them.
 void seam_carve_width(Image *img, int newWidth) {
-  assert(false); // TODO Replace with your implementation!
+    assert(0 < newWidth && newWidth <= Image_width(img));
+    
+    while(Image_width(img) > newWidth) {
+        
+        Matrix* energy = new Matrix;
+        compute_energy_matrix(img, energy);
+        
+        Matrix* cost = new Matrix;
+        compute_vertical_cost_matrix(energy, cost);
+        
+        
+        int seam[MAX_MATRIX_WIDTH];
+        find_minimal_vertical_seam(cost, seam);
+        
+        remove_vertical_seam(img, seam);
+    }
+  
 }
 
 // REQUIRES: img points to a valid Image
@@ -204,7 +272,9 @@ void seam_carve_width(Image *img, int newWidth) {
 //           then applying seam_carve_width(img, newHeight), then rotating
 //           90 degrees right.
 void seam_carve_height(Image *img, int newHeight) {
-  assert(false); // TODO Replace with your implementation!
+    rotate_left(img);
+    seam_carve_width(img, newHeight);
+    rotate_right(img);
 }
 
 // REQUIRES: img points to a valid Image
