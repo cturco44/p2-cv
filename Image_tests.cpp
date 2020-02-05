@@ -52,9 +52,9 @@ TEST(test_print_basic) {
 TEST(Image_width)
 {
   Image *img = new Image;
-  Image_init(img, 2, 2);
+  Image_init(img, 1, 2);
 
-  ASSERT_EQUAL(2,Image_width(img));
+  ASSERT_EQUAL(1,Image_width(img));
   
   delete img;
 }
@@ -63,9 +63,9 @@ TEST(Image_width)
 TEST(Image_Height)
 {
   Image *img = new Image;
-  Image_init(img, 2, 2);
+  Image_init(img, 2, 4);
 
-  ASSERT_EQUAL(2,Image_height(img));
+  ASSERT_EQUAL(4,Image_height(img));
   
   delete img;
 }
@@ -74,12 +74,10 @@ TEST(Image_Height)
 TEST(Basic_img_init)
 {
   Image *img = new Image;
-  Image_init(img, 2, 2);
+  Image_init(img, 2, 3);
 
   ASSERT_EQUAL(2,Image_width(img));
-  ASSERT_EQUAL(2,Image_height(img));
-  ASSERT_EQUAL(2,Matrix_height(&(img->red_channel)));
-  ASSERT_EQUAL(2,Matrix_width(&(img->red_channel)));
+  ASSERT_EQUAL(3,Image_height(img));
 
   delete img;
 }
@@ -93,11 +91,13 @@ TEST(Filled_img_init) {
   const Pixel blue = {0, 0, 255};
   const Pixel white = {255, 255, 255};
 
-  Image_init(img, 2, 2);
+  Image_init(img, 2, 3);
   Image_set_pixel(img, 0, 0, red);
   Image_set_pixel(img, 0, 1, green);
   Image_set_pixel(img, 1, 0, blue);
   Image_set_pixel(img, 1, 1, white);
+  Image_set_pixel(img, 2, 0, blue);
+  Image_set_pixel(img, 2, 1, white);
 
   // Capture our output
   ostringstream s;
@@ -105,14 +105,13 @@ TEST(Filled_img_init) {
 
   // Correct output
   ostringstream correct;
-  correct << "P3\n2 2\n255\n";
+  correct << "P3\n2 3\n255\n";
   correct << "255 0 0 0 255 0 \n";
+  correct << "0 0 255 255 255 255 \n";
   correct << "0 0 255 255 255 255 \n";
   ASSERT_EQUAL(s.str(), correct.str());
   ASSERT_EQUAL(2,Image_width(img));
-  ASSERT_EQUAL(2,Image_height(img));
-  ASSERT_EQUAL(2,Matrix_height(&(img->red_channel)));
-  ASSERT_EQUAL(2,Matrix_width(&(img->red_channel)));
+  ASSERT_EQUAL(3,Image_height(img));
 
   delete img; // delete the Image
 }
@@ -155,11 +154,10 @@ TEST(Image_set_pixel)
   Image_set_pixel(img, 1, 0, blue);
   Image_set_pixel(img, 1, 1, white);
 
-  Pixel pix = Image_get_pixel(img, 1, 1);
-  ASSERT_EQUAL(255, pix.r);
-  ASSERT_EQUAL(255, pix.g);
-  ASSERT_EQUAL(255, pix.b);
-
+  ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,0,0),red));
+  ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,0,1),green));
+  ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,1,0),blue));
+  ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,1,1),white));
   delete img;
 }
 

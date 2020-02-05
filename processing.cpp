@@ -98,7 +98,9 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
   {
     for(int j = 1; j < Image_width(img)-1; ++j)
     {
-      *Matrix_at(energy, i, j) = squared_difference(Image_get_pixel(img,i-1,j),Image_get_pixel(img,i+1,j)) + squared_difference(Image_get_pixel(img,i, j-1), Image_get_pixel(img, i, j+1));
+      int squaredNS = squared_difference(Image_get_pixel(img,i-1,j),Image_get_pixel(img,i+1,j));
+      int squaredEW = squared_difference(Image_get_pixel(img,i, j-1), Image_get_pixel(img, i, j+1));
+      *Matrix_at(energy, i, j) = squaredNS + squaredEW;
     }
   }
 
@@ -172,7 +174,6 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
 //           with the bottom of the image and proceeding to the top,
 //           as described in the project spec.
 void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
-  //Figure out if need to check the one requires condition!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   int left = 0;
   int right = Matrix_width(cost);
   int currCol = -1;
@@ -247,12 +248,14 @@ void remove_vertical_seam(Image *img, const int seam[]) {
 void seam_carve_width(Image *img, int newWidth) {
     assert(0 < newWidth && newWidth <= Image_width(img));
     
+    Matrix* energy = new Matrix;
+    Matrix* cost = new Matrix;
     while(Image_width(img) > newWidth) {
         
-        Matrix* energy = new Matrix;
+        
         compute_energy_matrix(img, energy);
         
-        Matrix* cost = new Matrix;
+        
         compute_vertical_cost_matrix(energy, cost);
         
         
@@ -261,6 +264,9 @@ void seam_carve_width(Image *img, int newWidth) {
         
         remove_vertical_seam(img, seam);
     }
+    delete energy;
+    delete cost;
+   
   
 }
 
