@@ -255,8 +255,8 @@ void seam_carve_width(Image *img, int newWidth) {
         Matrix* cost = new Matrix;
         compute_vertical_cost_matrix(energy, cost);
         
-        const int rows = Image_height(img);
-        int seam[rows];
+        
+        int seam[MAX_MATRIX_WIDTH];
         find_minimal_vertical_seam(cost, seam);
         
         remove_vertical_seam(img, seam);

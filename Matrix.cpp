@@ -81,11 +81,11 @@ int Matrix_row(const Matrix* mat, const int* ptr) {
 //           ptr point to an element in the Matrix
 // EFFECTS:  Returns the column of the element pointed to by ptr.
 int Matrix_column(const Matrix* mat, const int* ptr) {
-    int height = Matrix_height(mat);
+    int width = Matrix_width(mat);
     const int *start = Matrix_at(mat, 0, 0);
     
     int diff = static_cast<int>(ptr - start);
-    int column = diff / height;
+    int column = diff % width;
     
     return column;
 }
