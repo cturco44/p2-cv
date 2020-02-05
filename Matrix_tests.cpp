@@ -14,6 +14,47 @@ using namespace std;
 // -----
 // Fills a 3x5 Matrix with a value and checks
 // that Matrix_at returns that value for each element.
+TEST(test_matrix_basic) {
+  Matrix *mat = new Matrix;
+  Matrix_init(mat, 5, 5);
+
+  ASSERT_EQUAL(Matrix_width(mat), 5);
+  ASSERT_EQUAL(Matrix_height(mat), 5);
+
+  Matrix_fill(mat, 0);
+
+  int *ptr = Matrix_at(mat, 2, 3);
+  ASSERT_EQUAL(Matrix_row(mat, ptr), 2);
+  ASSERT_EQUAL(Matrix_column(mat, ptr), 3);
+  ASSERT_EQUAL(*ptr, 0);
+  *ptr = 42;
+
+  const int *cptr = Matrix_at(mat, 2, 3);
+  ASSERT_EQUAL(*cptr, 42);
+
+  Matrix_fill_border(mat, 2);
+  ASSERT_EQUAL(*Matrix_at(mat, 0, 0), 2);
+
+  ASSERT_EQUAL(Matrix_max(mat), 42);
+
+  delete mat;
+}
+
+TEST(test_matrix_print2) {
+  Matrix *mat = new Matrix;
+  Matrix_init(mat, 1, 1);
+
+  *Matrix_at(mat, 0, 0) = 42;
+  ostringstream expected;
+  expected << "1 1\n"
+           << "42 \n";
+  ostringstream actual;
+  Matrix_print(mat, actual);
+  ASSERT_EQUAL(expected.str(), actual.str());
+
+  delete mat;
+}
+
 TEST(test_fill_basic) {
   Matrix *mat = new Matrix; // create a Matrix in dynamic memory
 
@@ -213,67 +254,6 @@ TEST(Matrix_min_value_in_row) {
     delete mat;
 }
 
-TEST(test_matrix_print) {
-    
-    Matrix *mat = new Matrix;
-    Matrix_init(mat, 1, 1);
-
-    *Matrix_at(mat, 0, 0) = 42;
-    ostringstream expected;
-    expected << "1 1\n"
-            << "42 \n";
-    ostringstream actual;
-    Matrix_print(mat, actual);
-    ASSERT_EQUAL(expected.str(), actual.str());
-    delete mat;
-    
-    Matrix *mat2 = new Matrix; // create a Matrix in dynamic memory
-
-    const int width = 5;
-    const int height = 4;
-    
-    Matrix_init(mat2, width, height);
-    
-    *Matrix_at(mat2, 0, 0) = 17;
-    *Matrix_at(mat2, 0, 1) = 14;
-    *Matrix_at(mat2, 0, 2) = 36;
-    *Matrix_at(mat2, 0, 3) = 22;
-    *Matrix_at(mat2, 0, 4) = 5;
-    
-    *Matrix_at(mat2, 1, 0) = 1;
-    *Matrix_at(mat2, 1, 1) = 13;
-    *Matrix_at(mat2, 1, 2) = 12;
-    *Matrix_at(mat2, 1, 3) = 6;
-    *Matrix_at(mat2, 1, 4) = 5;
-    
-    *Matrix_at(mat2, 2, 0) = 0;
-    *Matrix_at(mat2, 2, 1) = 1;
-    *Matrix_at(mat2, 2, 2) = 1;
-    *Matrix_at(mat2, 2, 3) = 3;
-    *Matrix_at(mat2, 2, 4) = 22;
-    
-    *Matrix_at(mat2, 3, 0) = 7;
-    *Matrix_at(mat2, 3, 1) = 6;
-    *Matrix_at(mat2, 3, 2) = 6;
-    *Matrix_at(mat2, 3, 3) = 4;
-    *Matrix_at(mat2, 3, 4) = 19;
-    
-    ostringstream expected2;
-    expected2
-    << "5 4\n"
-    << "17 14 36 22 5 \n"
-    << "1 13 12 6 5 \n"
-    << "0 1 1 3 22 \n"
-    << "7 6 6 4 19 \n";
-    ostringstream actual2;
-    Matrix_print(mat, actual2);
-    ASSERT_EQUAL(expected2.str(), actual2.str());
-      
-    
-    
-    delete mat2;
-    
-}
 // ADD YOUR TESTS HERE
 // You are encouraged to use any functions from Matrix_test_helpers.h as needed.
 
