@@ -98,8 +98,12 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
   {
     for(int j = 1; j < Image_width(img)-1; ++j)
     {
-      int squaredNS = squared_difference(Image_get_pixel(img,i-1,j),Image_get_pixel(img,i+1,j));
-      int squaredEW = squared_difference(Image_get_pixel(img,i, j-1), Image_get_pixel(img, i, j+1));
+      Pixel N = Image_get_pixel(img,i-1,j);
+      Pixel S = Image_get_pixel(img,i+1,j);
+      Pixel W = Image_get_pixel(img,i, j-1);
+      Pixel E = Image_get_pixel(img, i, j+1);
+      int squaredNS = squared_difference(N,S);
+      int squaredEW = squared_difference(E,W);
       *Matrix_at(energy, i, j) = squaredNS + squaredEW;
     }
   }

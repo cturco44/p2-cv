@@ -186,6 +186,67 @@ TEST(Image_fill)
   delete img1;
 
 }
+
+TEST (Insane_init_small)
+{
+  Image *img = new Image;
+  Image_init(img,1,1);
+  Pixel fish = {0,1,0};
+  Image_set_pixel(img,0,0,fish);
+  ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,0,0),fish));
+  ASSERT_EQUAL(Image_width(img),1);
+  ASSERT_EQUAL(Image_height(img),1);
+  delete img;
+}
+
+TEST (Insane_Image_pretty_big)
+{
+  Image *img = new Image;
+  Image_init(img,30,50);
+  Pixel fish = {0,1,0};
+  Pixel corn = {0,1,0};
+  Image_fill(img,fish);
+  for(int i = 0; i < 15; ++i)
+    {
+      for(int j = 0; j < 30; ++j)
+      {
+        Image_set_pixel(img,i,j,corn);
+      }
+    }
+  for(int i = 0; i < 15; ++i)
+    {
+      for(int j = 0; j < 30; ++j)
+      {
+        ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,i,j),corn));
+      }
+    }
+  for(int i = 15; i < 50; ++i)
+    {
+      for(int j = 0; j < 30; ++j)
+      {
+        ASSERT_TRUE(Pixel_equal(Image_get_pixel(img,i,j),fish));
+      }
+    }
+    delete img;
+}
+
+TEST(Image_init_stream)
+{
+  Image *img = new Image;
+  istringstream in("P3\n2 2\n255\n255 0 0 0 255 0 \n0 0 255 255 255 255 \n");
+  Image_init(img,in);
+  ostringstream s;
+  Image_print(img, s);
+
+  // Correct output
+  ostringstream correct;
+  correct << "P3\n2 2\n255\n";
+  correct << "255 0 0 0 255 0 \n";
+  correct << "0 0 255 255 255 255 \n";
+  ASSERT_EQUAL(s.str(), correct.str());
+  delete img;
+}
+
 // NOTE: The unit test framework tutorial in Lab 2 originally
 // had a semicolon after TEST_MAIN(). Although including and
 // excluding the semicolon are both correct according to the c++
