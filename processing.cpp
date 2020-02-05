@@ -153,8 +153,6 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
         }
     }
     
-    
-  assert(false); // TODO Replace with your implementation!
 }
 
 
@@ -218,7 +216,24 @@ void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
 // NOTE:     Use the new operator here to create the smaller Image,
 //           and then use delete when you are done with it.
 void remove_vertical_seam(Image *img, const int seam[]) {
-  assert(false); // TODO Replace with your implementation!
+    assert(Image_width(img) >= 2);
+    int width = Image_width(img);
+    //didn't write asserts for all RMEs
+    
+    Image* holder = new Image;
+    Image_init(holder, Image_width(img) - 1, Image_height(img));
+    
+    for (int row = 0; row < Image_height(img); ++row) {
+        for(int col = 0; col < seam[row]; ++col) {
+            Image_set_pixel(holder, row, col, Image_get_pixel(img, row, col));
+        }
+        for(int col2 = seam[row] + 1; col2 < width - 1; ++col2) {
+            Image_set_pixel(holder, row, col2 - 1, Image_get_pixel(img, row, col2));
+        }
+    }
+    
+    *holder = *img;
+    delete holder;
 }
 
 
