@@ -232,7 +232,7 @@ void remove_vertical_seam(Image *img, const int seam[]) {
         }
     }
     
-    *holder = *img;
+    *img = *holder;
     delete holder;
 }
 
@@ -245,7 +245,23 @@ void remove_vertical_seam(Image *img, const int seam[]) {
 // NOTE:     Use the new operator here to create Matrix objects, and
 //           then use delete when you are done with them.
 void seam_carve_width(Image *img, int newWidth) {
-  assert(false); // TODO Replace with your implementation!
+    assert(0 < newWidth && newWidth <= Image_width(img));
+    
+    while(Image_width(img) > newWidth) {
+        
+        Matrix* energy = new Matrix;
+        compute_energy_matrix(img, energy);
+        
+        Matrix* cost = new Matrix;
+        compute_vertical_cost_matrix(energy, cost);
+        
+        const int rows = Image_height(img);
+        int seam[rows];
+        find_minimal_vertical_seam(cost, seam);
+        
+        remove_vertical_seam(img, seam);
+    }
+  
 }
 
 // REQUIRES: img points to a valid Image
