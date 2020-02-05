@@ -196,7 +196,7 @@ void find_minimal_vertical_seam(const Matrix* cost, int seam[]) {
       right = currCol+1;
     }
     
-    currCol = Matrix_column_of_min_value_in_row(cost, i, left, right);
+    currCol = Matrix_column_of_min_value_in_row(cost, i, left, right+1);
     *(seam + i) = currCol;
     
   }
@@ -227,7 +227,7 @@ void remove_vertical_seam(Image *img, const int seam[]) {
         for(int col = 0; col < seam[row]; ++col) {
             Image_set_pixel(holder, row, col, Image_get_pixel(img, row, col));
         }
-        for(int col2 = seam[row] + 1; col2 < width - 1; ++col2) {
+        for(int col2 = seam[row] + 1; col2 < width; ++col2) {
             Image_set_pixel(holder, row, col2 - 1, Image_get_pixel(img, row, col2));
         }
     }
