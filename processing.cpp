@@ -123,17 +123,17 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
     Matrix_init(cost, width, height);
     
     
-    const int *end = Matrix_at(cost, 0, width - 1);
+    const int *end = Matrix_at(cost, 0, width-1);
     
     //Fills first row of cost with energy values
-    for (const int *start = Matrix_at(cost, 0, 0); start < end; ++start) {
+    for (const int *start = Matrix_at(cost, 0, 0); start <= end; ++start) {
         
         int column = Matrix_column(cost, start);
         *Matrix_at(cost, 0, column) = *Matrix_at(energy, 0, column);
     }
     
-    for (int row = 1; row < height - 1; ++row) {
-        for (int col = 0; col < width - 1; ++col) {
+    for (int row = 1; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
             
             int c_before = col - 1;
             int c_next = col + 1;
@@ -145,7 +145,7 @@ void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
                 c_next = width - 1;
             }
             
-            int min = Matrix_min_value_in_row(cost, row - 1, c_before, c_next);
+            int min = Matrix_min_value_in_row(cost, row - 1, c_before, c_next+1);
             int cost_value = *Matrix_at(energy, row, col) + min;
             
             *Matrix_at(cost, row, col) = cost_value;

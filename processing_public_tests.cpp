@@ -146,7 +146,12 @@ void test_cost(const Matrix *cost_mat, string prefix){
 
   Matrix* cost_mat_correct = new Matrix;
   load_matrix(cost_mat_correct, prefix + "_cost_correct.txt");
+  ofstream out;
 
+  out.open("output.txt");
+  Matrix_print(cost_mat,out);
+  out.close();
+  
   assert(Matrix_equal(cost_mat, cost_mat_correct));
   cout << "PASS" << endl;
 
